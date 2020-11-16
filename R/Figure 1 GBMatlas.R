@@ -35,7 +35,7 @@ downsampleHeatmap=25000
 FDR=0.1
 FoldChangeCutoff=1.4
 
-source("/Users/kumarpa/Desktop/Work/Jax/Scripts/Scripts_Kyuson/Functions_Kyuson_Project_GitHub.R")
+source("/Users/kumarpa/Desktop/Work/Jax/Scripts/Scripts_Kyuson/Functions_GBMatlas.R")
 
 setwd(pkWD)
 plotWD <- paste(getwd(),paste0("For_Github_Main_Figures"),sep="/"); print(plotWD)

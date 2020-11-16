@@ -19,7 +19,7 @@ library(ggplotify)
 library(viridis)
 library(SummarizedExperiment)
 
-source("/Users/kumarpa/Desktop/Work/Jax/Scripts/Scripts_Kyuson/Functions_Kyuson_Project_GitHub.R")
+source("/Users/kumarpa/Desktop/Work/Jax/Scripts/Scripts_Kyuson/Functions_GBMatlas.R")
 
 GroupName <- "Patient"
 ClusterGroup <- "Cluster_08_09_10_11"
