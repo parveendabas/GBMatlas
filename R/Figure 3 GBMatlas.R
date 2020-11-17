@@ -21,40 +21,35 @@ library(SummarizedExperiment)
 
 GroupName <- "Patient"
 ClusterGroup <- "Cluster_07"
-RDSname <- paste0("Seurat_Formatted_Normalized_USE_GBM_",ClusterGroup)
-pkWD <- "/Users/kumarpa/Desktop/Work/Jax/Kyuson/Manuscript_Draft"
-RDSdir <- paste0("/Users/kumarpa/Desktop/Work/Jax/Kyuson/Bill_Pipeline_Data/Data_Input/",ClusterGroup)
+RDSname <- paste0("GBM_",ClusterGroup)
+pkWD <- "/Users/kumarpa/Desktop/GBMatlas_Code"
+RDSdir <- paste0("/Users/kumarpa/Desktop/GBMatlas_Code/data/")
 ColToUse <- "cluster.R2"
 Suffix <- "TCells"
 ## Change Figure4 as well
 NameInPdf.main <- paste0(ColToUse,"_Based_",Suffix)
 IdentToSubsetColName="cluster.R2"
-IdentToSubset="NA"
-##downsampleHeatmap=5000
-
 FDR=0.1
-FoldChangeCutoff=1.4
 
-source("/Users/kumarpa/Desktop/Work/Jax/Scripts/Scripts_Kyuson/Functions_GBMatlas.R")
+source("/Users/kumarpa/Desktop/GBMatlas_Code/Functions_GBMatlas.R")
 
 setwd(pkWD)
-plotWD <- paste(getwd(),paste0("For_Github_Main_Figures"),sep="/"); print(plotWD)
-dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = FALSE)
+plotWD <- paste(getwd(),paste0("GBMatlas_Main_Figures"),sep="/"); print(plotWD)
+dir.create(file.path(getwd(),paste0("GBMatlas_Main_Figures")), showWarnings = FALSE)
 
 
   setwd(plotWD)
   plotWD1 <- paste(getwd(),paste0("Figure3_",Suffix),sep="/"); print(plotWD1)
   dir.create(file.path(getwd(),paste0("Figure3_",Suffix)), showWarnings = FALSE)
   
-  #Custom.Cluster = c(`Cluster01` = "#0000ee", `Cluster02` = "#27408B", `Cluster03` = "#56B4E9",  `Cluster14` = "#00ffff", `Cluster04` = "#00ff00", `Cluster05` = "#DEB887", `Cluster06` = "#008000", `Cluster07` = "#bf3eff", `Cluster08` = "#ff0000", `Cluster09` = "#8b0000", `Cluster10` = "#CD5C5C", `Cluster11` = "#ff80bf", `Cluster12` = "#F0E442", `Cluster13` = "#ffff00"),
   ClusOrder.main <- c("Cluster01", "Cluster02", "Cluster03", "Cluster04", "Cluster05", "Cluster06", "Cluster07", "Cluster08", "Cluster09", "Cluster10", "Cluster11", "Cluster12", "Cluster13", "Cluster14"); ClusOrder.main
-  cbPalette.Cluster <- c("darkblue", "#0073ff" ,"#009FFF" ,"#00EEFF", "#FF0073", "#FF00D3" ,"#C900FF" ,"#FF8C00" ,"#FF5900", "#FF2500" ,"darkred" ,"#5FFF00", "#AFFF00" ,"#FFFF00")
+  ClusterPalette <- c("darkblue", "#0073ff" ,"#009FFF" ,"#00EEFF", "#FF0073", "#FF00D3" ,"#C900FF" ,"#FF8C00" ,"#FF5900", "#FF2500" ,"darkred" ,"#5FFF00", "#AFFF00" ,"#FFFF00")
   TClusOrder <- c("TC1", "TC2", "TC3", "TC4", "TC5", "TC6", "TC7", "TC8", "TC9"); TClusOrder
   TClusOrderPalette <- c("#008000", "darkred", "#ffff00", "#00ff00", "#C900FF" ,"#00EEFF", "#0073ff", "#FF2500", "#FF00D3")
   CTOrder <- c("CD4 T", "NK1", "Dividing T", "Tregs", "Resting T", "CD8 Trm", "CD8 T", "NK2", "CD8 Tmem"); CTOrder
   cbPalette.CT <- c("#008000", "darkred", "#ffff00", "#00ff00", "#C900FF" ,"#00EEFF", "#0073ff", "#FF2500", "#FF00D3")
-  GroupOrder.temp = c("CNSTM-068", "CNSTM-070", "CNSTM-081", "CNSTM-096")
-  GroupPalette.temp <- c("#0039d1","#c20f00","purple","#26cc00")
+  GroupOrder = c("CNSTM-068", "CNSTM-070", "CNSTM-081", "CNSTM-096")
+  GroupPalette <- c("#0039d1","#c20f00","purple","#26cc00")
   FragOrder = c("CNSTM-068-A", "CNSTM-068-B", "CNSTM-068-C", "CNSTM-068-D", "CNSTM-070-A", "CNSTM-070-C", "CNSTM-070-D", "CNSTM-070-F", "CNSTM-081-A", "CNSTM-081-B", "CNSTM-081-C", "CNSTM-081-D", "CNSTM-096-1", "CNSTM-096-2", "CNSTM-096-4", "CNSTM-096-5")
   FragPalette <- c("#0000FF", "#0045FF", "#008AFF" ,"#00CFFF", "#FF9A00", "#FF6E00", "#FF1400" ,"darkred" ,"#FF0052", "#FF00A6", "#FF00F9" ,"#B000FF","darkgreen","#30FF00","#B9FF00", "#FFFF00")
   PredictionOrder <- c("diploid", "aneuploid")
@@ -62,27 +57,8 @@ dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = 
   
   
   setwd(RDSdir)
-  FullInfo <- read.table(file = paste0("Full_Information_",ClusterGroup,"_Cells.txt"), header = T, sep = "\t"); head(FullInfo); dim(FullInfo)
-  
-  setwd(RDSdir)
   SCdata.main <- readRDS(paste0(RDSname,".rds"))
-  SCdata.main
-  head(SCdata.main@meta.data)
-  dim(GetAssayData(object = SCdata.main, slot = "scale.data")) 
-  colnames(SCdata.main@meta.data)[colnames(SCdata.main@meta.data) == 'cluster.R2'] <- 'cluster.R2'
-  SCdata.main$Custom.Cluster <- gsub(" ", "",SCdata.main$Custom.Cluster)
-  table(SCdata.main@meta.data[,ColToUse])
-  table(as.character(as.numeric(SCdata.main@meta.data[,ColToUse])))
-  SCdata.main@meta.data[,ColToUse] <- as.character(as.numeric(SCdata.main@meta.data[,ColToUse]))
-  SCdata.main@meta.data[,ColToUse] <- paste0("TC",SCdata.main@meta.data[,ColToUse])
-  table(SCdata.main@meta.data[,ColToUse])
-  SCdata.main@meta.data$Patient <- FullInfo$Patient[match(rownames(SCdata.main@meta.data), rownames(FullInfo))]
-  SCdata.main@meta.data$Fragment <- FullInfo$Fragment[match(rownames(SCdata.main@meta.data), rownames(FullInfo))]
-  SCdata.main@meta.data$Custom.Cluster <- FullInfo$Custom.Cluster[match(rownames(SCdata.main@meta.data), rownames(FullInfo))]
-  SCdata.main@meta.data$prediction <- FullInfo$prediction[match(rownames(SCdata.main@meta.data), rownames(FullInfo))]
-  SCdata.main$prediction <- gsub("tumor", "aneuploid",SCdata.main$prediction)
-  SCdata.main$prediction <- factor(SCdata.main$prediction, levels = PredictionOrder)
-  Idents(SCdata.main) <- ColToUse
+  #saveRDS(SCdata.main, paste0(RDSname,".rds"))
   DefaultAssay(SCdata.main) <- "RNA"
   
   
@@ -97,84 +73,57 @@ dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = 
   ToUseOrder <- TClusOrder
   ToUseCol <- ColToUse
   
-  MarkerDir <- paste0("/Users/kumarpa/Desktop/Work/Jax/Kyuson/Bill_Pipeline_Data/DGEs/DGEs_",ToUseCol,"_Based_",Suffix)
-  setwd(MarkerDir)
-  MarkerGenes <- read.table(file = paste0("DEGs_Heatmap_",ToUseCol,"_Based_",Suffix,".txt"), header = T, sep = "\t"); head(MarkerGenes); dim(MarkerGenes)
+  setwd(RDSdir)
+  MarkerGenes <- read.table(file = paste0("DEGs_",Suffix,".txt"), header = T, sep = "\t"); head(MarkerGenes); dim(MarkerGenes)
   
   
   ######## **************************************************  Panel a: HEATMAP  ****************************************************
   ### Main Figures
   RUNFigure3a="YES"
   if(RUNFigure3a=="YES"){
-    markers <- MarkerGenes
-    markers <- markers[markers$p_val_adj < FDR,]; dim(markers)
-    markers <- markers[!rownames(markers) %like% "^RP[SL]",]; dim(markers)
-    markers <- markers[!rownames(markers) %like% "^RP11",]; dim(markers)
-    markers <- markers[!rownames(markers) %like% "^MT",]; dim(markers)
-    markers <- markers[!rownames(markers) %like% "^RNA",]; dim(markers)
+    markers <- MarkerGenes[MarkerGenes$p_val_adj < FDR,]; dim(markers)
     
-    topnumber=30
-    top <- markers %>% group_by(cluster) %>% top_n(n = topnumber, wt = avg_logFC); dim(top)
-    topFDR <- markers %>% dplyr::arrange(p_val_adj, desc(avg_logFC)) %>% dplyr::group_by(cluster) %>% dplyr::slice(1:topnumber); dim(topFDR)
-    setwd(MarkerDir)
-    temp <- as.data.frame(topFDR)
-    write.table(temp, file = paste0("DEGs_Heatmap_",ToUseCol,"_Based_",Suffix,"_Top",topnumber,"_Genes.txt"),quote=F,sep="\t")
-    SCdata.main$Temp <- "Temp"
-    Idents(SCdata.main) <- "Temp"
-    #SCdata.temp.Heatmap <- subset(SCdata.main, downsample=downsampleHeatmap)
-    SCdata.temp.Heatmap <- SCdata.main
-    Idents(SCdata.main) <- ToUseCol
-    Idents(SCdata.main) <- factor(Idents(SCdata.main), levels= ToUseOrder)
-    SCdata.temp.Heatmap <- ScaleData(object = SCdata.temp.Heatmap, verbose = FALSE, features = markers$gene, scale.max = 2)
-    dtype="scale.data"
-    nor.exp <- GetAssayData(object = SCdata.temp.Heatmap, slot = dtype); print(dim(nor.exp))
-    UseGenes <- intersect(markers$gene, rownames(nor.exp)); length(UseGenes)
-    nor.exp <- nor.exp[UseGenes,,drop=FALSE]; dim(nor.exp)
-    table(SCdata.temp.Heatmap@meta.data[,ToUseCol], SCdata.temp.Heatmap@meta.data[,GroupName])
-    check <- intersect(GroupOrder.temp, unique(SCdata.temp.Heatmap@meta.data[,GroupName])); check
-    #meta.data.plot <- SCdata.temp.Heatmap@meta.data[,c(GroupName, "Fragment", ColToUse)]
-    meta.data.plot <- SCdata.temp.Heatmap@meta.data[,c(GroupName, ColToUse)]
-    meta.data.plot[,ColToUse] <- factor(meta.data.plot[,ColToUse], levels = ToUseOrder)
-    meta.data.plot[,GroupName] <- factor(meta.data.plot[,GroupName], levels = GroupOrder.temp)
-    meta.data.plot <- meta.data.plot[order(factor(meta.data.plot[,ColToUse], levels = ToUseOrder), factor(meta.data.plot[,GroupName], levels = GroupOrder.temp)),]; head(meta.data.plot)
-    meta.data.plot[,ColToUse] <- as.character(meta.data.plot[,ColToUse])
-    nor.exp <- nor.exp[,rownames(meta.data.plot), drop=FALSE]
-    colnames(meta.data.plot) <- c("Patient", "Cluster")
-    head(meta.data.plot)
-    print(dim(nor.exp))
+    library(ComplexHeatmap)
     
-    Cluster.FULL =  TClusOrderPalette[1:length(TClusOrder)]; names(Cluster.FULL) <- TClusOrder; Cluster.FULL
-    Fragment.FULL = FragPalette[1:length(FragOrder)]; names(Fragment.FULL) <- FragOrder; Fragment.FULL
-    prediction.FULL = PredictionPalette[1:length(PredictionOrder)]; names(prediction.FULL) <- PredictionOrder; prediction.FULL
-    Patient.FULL = GroupPalette.temp[1:length(GroupOrder.temp)]; names(Patient.FULL) <- GroupOrder.temp; Patient.FULL
+    HumanTcells.sce=as.SingleCellExperiment(SCdata.main)
+    plot.data<-as.data.frame(assay(HumanTcells.sce, "logcounts"))
+    plot.data<-plot.data[markers$gene,]
+    plot.data <- plot.data - rowMeans(plot.data)
+    plot.data=na.omit(plot.data)
+    column_annot <-SCdata.main@meta.data[,c("cluster.R2","Patient"),drop=F]
+    colnames(column_annot) <- c("Cluster","Patient")
+    column_annot=with(column_annot, column_annot[order(Cluster), , drop=F])
+    plot.data<-plot.data[,row.names(column_annot)]
+    column.col=GroupPalette
+    names(column.col)=c("CNSTM-068", "CNSTM-070", "CNSTM-081", "CNSTM-096")
+    column.col2= TClusOrderPalette
+    names(column.col2)=c("TC1", "TC2", "TC3", "TC4", "TC5", "TC6", "TC7", "TC8","TC9")
     
-    ann_colors = list(
-      Cluster = Cluster.FULL[names(Cluster.FULL) %in% as.character(unique(meta.data.plot$Cluster))],
-      Fragment = Fragment.FULL[names(Fragment.FULL) %in% as.character(unique(meta.data.plot$Fragment))],
-      prediction = prediction.FULL[names(prediction.FULL) %in% as.character(unique(meta.data.plot$prediction))],
-      Patient = Patient.FULL[names(Patient.FULL) %in% as.character(unique(meta.data.plot$Patient))]
-    )
+    column.colors=list()
+    column.colors[["Patient"]]<-column.col
+    column.colors[["Cluster"]]<-column.col2
+    Patient=as.matrix(column_annot[,c("Patient"),drop=F])
+    Cluster=as.matrix(column_annot[,c("Cluster"),drop=F])
+    colanno <- columnAnnotation(df=column_annot,
+                                show_annotation_name =T,show_legend = F,col=column.colors)
+    genes=c('IL7R','GNLY','HOPX','NKG7','MKI67','FOXP3',"IL2RA","CTLA4","TIGIT","S100A4","GZMK","CD8A","HLA-DRB1","CD2","IFI6")
     
-    ### Lighter Shade of blue near Zero
-    colors <- c(seq(-2,2,by=0.01))
-    my_palette <- c(colorRampPalette(colors = c("darkblue", "#a7c5f2", "#e6f0f5", "gray97", "darksalmon", "orangered3", "darkred")) (n = length(colors)))
+    rows=rowAnnotation(sel = anno_mark(at = match(genes,row.names(plot.data)), labels = genes,labels_gp =gpar(col = "black", fontsize = 8)))
     
-    Temp <- pheatmap(nor.exp[as.character(unique(topFDR$gene)),],annotation_col=meta.data.plot,show_colnames=F,show_rownames=T,  color=my_palette, breaks=colors, 
-                     annotation_colors = ann_colors, cluster_rows = FALSE, cluster_cols = FALSE, fontsize = 10); dev.off()
-    #as.grob(pheatmap(nor.exp[as.character(top$gene),],annotation_col=meta.data.plot,show_colnames=F,show_rownames=T,  color=my_palette, breaks=colors, 
-    #                       annotation_colors = ann_colors, cluster_rows = FALSE, cluster_cols = FALSE, main = paste0("Heatmap All markers"), fontsize = 13)); dev.off()
-    
-    sigGenes = c("IL7R", "MKI67", "FOXP3", "IL2RA", "CTLA4", "TIGIT", "S100A4", "GZMK", "HLA-DRB1", "CD2", "IFI6", "GNLY", "NKG7", "CD3E", "CD8A", "HOPX")
-    ##heatmap <- Temp$gtable
-    ##new.label <- heatmap$grobs[[which(heatmap$layout$name == "row_names")]] 
-    ##new.label$label
-    
-    p4 <- Gene.Labels.pheatmap(Temp, kept.labels = sigGenes, repel.degree = 0)
+    col<- circlize::colorRamp2(breaks = c(-2, 0, 2), colors = c("#007dd1", "white", "#ab3000"))
+    #features=top30.markers.all.HumanTcells$gene
+    HM=Heatmap(name="logcounts",as.matrix(plot.data),cluster_rows =F,cluster_columns = F,top_annotation = colanno, right_annotation = rows,row_names_gp = gpar(fontsize=5),
+               col = col,show_column_names= F,show_row_names=F,border = F,show_heatmap_legend = T,use_raster = T)        
+    lgd=Legend(title = "logcounts", at=  c(-2,0, 2), col=col)
+    lgd1=Legend(labels = levels(as.factor(column_annot$Cluster)),title="Cluster",legend_gp = gpar(fill=column.col2,fontsize=20))
+    lgd2=Legend(labels = levels(as.factor(Patient)),title="Patient",legend_gp = gpar(fill=column.col,fontsize=20))
     
     setwd(plotWD1)
-    pdf(paste0("Figure3_",ToUseCol,"_",Suffix,"_Panel_a_HEATMAP_UPLOAD.pdf"), height = 4, width = 7.5)
-    print(plot_grid(p4))
+    pdf(paste0("Figure3_",Suffix,"_Panel_a.pdf"),width=7,height=4)
+    draw(HM,heatmap_legend_list = list(lgd1, lgd2), heatmap_legend_side = "right")
     dev.off()
+    
+    
   }
   
   
@@ -186,14 +135,12 @@ dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = 
   Idents(SCdata.main) <- ToUseCol
   Idents(SCdata.main) <- factor(Idents(SCdata.main), levels= ToUseOrder)
   
-  
-  r2.1 <- DimPlot(SCdata.main, reduction = "umap", cols = ToUsePallete, label = F, label.size = 3, pt.size = 1.8) + 
-    theme(axis.title.x=element_blank(), axis.title.y = element_blank(), legend.key.size = unit(0.45,"line"), legend.text=element_text(size=13)) +
-    guides(color = guide_legend(override.aes = list(size = 1.2)))
-  
   setwd(plotWD1)
-  pdf(paste0("Figure3_",ToUseCol,"_",Suffix,"_Panel_b_Cluster_UMAP_UPLOAD.pdf"), height = 3, width = 5.5)
-  print(plot_grid(r2.1))
+  pdf(paste0("Figure3_",Suffix,"_Panel_b.pdf"), height = 3, width = 5.5)
+  
+  print(DimPlot(SCdata.main, reduction = "umap", cols = ToUsePallete, label = F, label.size = 3, pt.size = 1.8) + 
+    theme(axis.title.x=element_blank(), axis.title.y = element_blank(), legend.key.size = unit(0.45,"line"), legend.text=element_text(size=13)) +
+    guides(color = guide_legend(override.aes = list(size = 1.2))))
   dev.off()
   }
   
@@ -204,7 +151,6 @@ dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = 
   
   RUNFigure3c="YES"
   if(RUNFigure3c=="YES"){
-    setwd(MarkerDir)
     Idents(SCdata.main) <- ToUseCol
     Idents(SCdata.main) <- factor(Idents(SCdata.main), levels= ToUseOrder)
     
@@ -214,26 +160,66 @@ dir.create(file.path(getwd(),paste0("For_Github_Main_Figures")), showWarnings = 
     row.object <- Voilin_Plot_OneGenePerLine(SCdata.main, PlotGenes, GeneCol, GroupCol, cbPalette.CT, 1) 
     #p1 <- plot_grid(plotlist=row.object, nrow = length(row.object), labels=unique(PlotGenes[,GroupCol]), label_colour="darkred", hjust = -0.15)
     setwd(plotWD1)
-    pdf(paste0("Figure3_",ToUseCol,"_",Suffix,"_Panel_c_Violin_UPLOAD.pdf"), height = 7, width = 5)
+    pdf(paste0("Figure3_",Suffix,"_Panel_c.pdf"), height = 7, width = 5)
     print(plot_grid(plotlist=row.object, nrow = length(row.object)))
     dev.off()
     
   }
   
   
-  ######## **************************************************  Panel c: Violin  ****************************************************
-  ### Main Figures
-  RUNFigure3d="YES"
-  if(RUNFigure3d=="YES"){
+  RUNFigure3e="YES"
+  if(RUNFigure3e=="YES"){
+    
+    
+    library(survival)
+    library(survminer)
+    #to make figure 3e
+    #load data
+    setwd(RDSdir)
+    CGGA.EXP <- read.table("CGGA.mRNAseq_325.RSEM-genes.20200506.txt",as.is=T,header = T,row.names=1)
+    AnnotationCGGA <- read.csv("2020-08-20_CGGA_pheno.csv",as.is=T,header = T,row.names=1)
+    CGGA.GBM=filter(AnnotationCGGA,Histology=="GBM")
+    #extract S100A4 expression and merge with annotation
+    data <- CGGA.EXP["S100A4",]
+    t.data=t(data)
+    CGGA.dat=merge(t.data,AnnotationCGGA,by.x=0, by.y=0)
+    #get KM plots
+    CGGA.dat$OS<-as.numeric(CGGA.dat$survival)
+    CGGA.dat$status<-as.numeric(CGGA.dat$status)
+    surv_object <- Surv(time = CGGA.dat$OS, event = CGGA.dat$status)
+    #hist(CGGA.dat$S100A4)
+    median(CGGA.dat$S100A4)
+    CGGA.dat <-CGGA.dat %>% mutate(S100A4.Levels = ifelse(S100A4 >=14.91, "High", "Low"))
+    CGGA.dat$S100A4.Levels <-factor(CGGA.dat$S100A4.Levels)
+    fit1 <- survfit(surv_object ~ S100A4.Levels, data = CGGA.dat)
+    summary(fit1)
+    P1=ggsurvplot(fit1, data = CGGA.dat, pval = TRUE,pval.coord = c(50, 1),pval.size=6,legend="top",palette = c("Red","Blue"),risk.table = F,font.main = c(12, "bold"),legend.title = "Expression",
+                  title="S100A4-AllGliomas-CGGA", legend.labs = c("High", "Low"),font.x = c(14, "bold"),font.y = c(14, "bold"),font.tickslab = c(12, "plain"))
+    #get GBM patients survival only
+    Counts=as.data.frame(CGGA.EXP)
+    data <- Counts["S100A4",]
+    t.data=t(data)
+    CGGA.dat=merge(t.data,CGGA.GBM,by.x=0, by.y=0)
+    CGGA.dat$OS<-as.numeric(CGGA.dat$survival)
+    CGGA.dat$status<-as.numeric(CGGA.dat$status)
+    surv_object <- Surv(time = CGGA.dat$OS, event = CGGA.dat$status)
+    #hist(CGGA.dat$S100A4)
+    median(CGGA.dat$S100A4)
+    CGGA.dat <-CGGA.dat %>% mutate(S100A4.Levels = ifelse(S100A4 >=38.39, "High", "Low"))
+    CGGA.dat$S100A4.Levels <-factor(CGGA.dat$S100A4.Levels)
+    fit1 <- survfit(surv_object ~ S100A4.Levels, data = CGGA.dat)
+    summary(fit1)
+    P2=ggsurvplot(fit1, data = CGGA.dat, pval = TRUE,pval.coord = c(50, 1),pval.size=6,legend="top",palette = c("Red","Blue"),risk.table = F,font.main = c(12, "bold"),legend.title = "Expression",
+                  title="S100A4-GBM only-CGGA", legend.labs = c("High", "Low"),font.x = c(14, "bold"),font.y = c(14, "bold"),font.tickslab = c(12, "plain"))
+    P=list(P1,P2)
+    
     setwd(plotWD1)
-    Idents(SCdata.main) <- ToUseCol
-    Idents(SCdata.main) <- factor(Idents(SCdata.main), levels= ToUseOrder)
-    pdf(paste0("Figure3_",ToUseCol,"_",Suffix,"_Panel_d_Violin_Tcell_UPLOAD.pdf"), height = 3, width = 4.3)
-    print(VlnPlot(SCdata.main, features = c("S100A4"), cols = ToUsePallete, pt.size = 0.0)  + 
-            theme(axis.title.x=element_blank(), axis.title.y = element_blank(), axis.text=element_text(size=14),
-                  legend.key.size = unit(0.5, "cm"), plot.title = element_text(size = 16), legend.position = 'none') +
-            stat_summary(fun=median, geom="point", size=1, color="black"))
+    pdf(file =paste0("Figure3_",Suffix,"_Panel_e.pdf"), height = 3.5, width =14,onefile = T)
+    arrange_ggsurvplots(P,print = TRUE, ncol = 4,nrow = 1,surv.plot.height = NULL,risk.table.height = NULL,ncensor.plot.height = NULL)
     dev.off()
+    
+    
+    
   }
   
   
