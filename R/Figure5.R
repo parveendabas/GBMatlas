@@ -10,12 +10,12 @@ RobjDirectory=paste0(Directory,"R_Objects/")
 #Figure5a
 #load all cluster r object
 
-SeuratObj=readRDS(paste0(RobjDirectory,"Allhuman-7-21-21 patients renamed.rds"))
+SeuratObj=readRDS(paste0(RobjDirectory,"Allhuman-11-3-21 patients renamed.rds"))
 AssignmentColors=c(TCells = "#8DB032", BCells = "#F9BF31", Other = "#E47B1E", 
                    Myeloid = "#CD4D53", Endo = "#DC73B0", Oligo = "#966CBF", Pericytes = "#2960A1", 
                    Glioma = "#003F5C")
 
-pat2=c("LGG-01", "LGG-04", "ndGBM-01", "ndGBM-02", "ndGBM-03", "rGBM-01", "rGBM-02", "rGBM-03", "rGBM-04", "rGBM-05")
+pat2=c("LGG-04", "ndGBM-01", "ndGBM-02", "ndGBM-03","ndGBM-11",  "rGBM-01", "rGBM-02", "rGBM-03", "rGBM-04", "rGBM-05")
 
 for(i in 1:length(pat2)){
   x=ggplot(SeuratObj@meta.data%>%filter(Patient==pat2[i]), aes(Patient, fill=Assignment))+geom_bar(stat="count",position="fill",colour = "white",width =0.7)+ 
@@ -25,7 +25,7 @@ for(i in 1:length(pat2)){
           strip.text=element_text(face = "bold",color = "black",size=8),plot.margin = unit(c(0,-0.2,-0.2,0),'cm'))
   Final[[i]]=x
 }
-mylegend<-get_legend(Final[[2]]+theme_min()+ NoAxes()+guides(colour = guide_colourbar(title=Y,title.position = "top",title.theme = element_text(size=10))))
+mylegend<-get_legend(Final[[2]]+theme_min()+ NoAxes()+guides(colour = guide_colourbar(title="Assignment",title.position = "top",title.theme = element_text(size=10))))
 
 pdf(file =paste(paste0(OutputDirectory,ObjName,Subset,"res",resolution,"piecharts fragment and assignment figure 5a.pdf")), height = 6, width =10,onefile = T)
 ggpubr::ggarrange(Final[[1]]+NoLegend(),Final[[6]]+NoLegend(),Final[[2]]+NoLegend(),Final[[7]]+NoLegend(),Final[[3]]+NoLegend(),
@@ -38,15 +38,15 @@ dev.off()
 
 
 #Figure5c
-FragmentColors=c(`LGG-01-A` = "#003F5C", `LGG-01-B` = "#005B72", `LGG-01-C` = "#007789", 
-                 `LGG-01-D` = "#087B91", `LGG-02` = "#1B6486", `LGG-03` = "#2D4C7C", 
-                 `LGG-04-1` = "#2A5D9C", `LGG-04-2` = "#2572BF", `LGG-04-3` = "#2D76C9", 
-                 `ndGBM-01-A` = "#4764AE", `ndGBM-01-C` = "#625394", `ndGBM-01-D` = "#795CA3", 
-                 `ndGBM-01-F` = "#8F68B9", `ndGBM-02-1` = "#9E6CC0", `ndGBM-02-2` = "#9F5FAC", 
-                 `ndGBM-02-4` = "#9F5398", `ndGBM-02-5` = "#B460A3", `ndGBM-03-1` = "#CE74B4", 
-                 `ndGBM-03-2` = "#DE7CBA", `ndGBM-03-3` = "#D968A3", `ndGBM-04` = "#D5548C", 
-                 `ndGBM-05` = "#DD5B87", `ndGBM-06` = "#EB6A88", `ndGBM-07` = "#EF7082", 
-                 `ndGBM-08` = "#D95A64", `ndGBM-09` = "#C34446", `rGBM-01-A` = "#CD464A", 
+FragmentColors=c(`LGG-03` = "#003F5C", `LGG-04-1` = "#005B72", `LGG-04-2` = "#007789", 
+                 `LGG-04-3` = "#087B91", `ndGBM-01-A` = "#1B6486", `ndGBM-01-C` = "#2D4C7C", 
+                 `ndGBM-01-D` = "#2A5D9C", `ndGBM-01-F` = "#2572BF", `ndGBM-02-1` = "#2D76C9", 
+                 `ndGBM-02-2` = "#4764AE", `ndGBM-02-4` = "#625394", `ndGBM-02-5` = "#795CA3", 
+                 `ndGBM-03-1` = "#8F68B9", `ndGBM-03-2` = "#9E6CC0", `ndGBM-03-3` = "#9F5FAC", 
+                 `ndGBM-04` = "#9F5398", `ndGBM-05` = "#B460A3", `ndGBM-06` = "#CE74B4", 
+                 `ndGBM-07` = "#DE7CBA", `ndGBM-08` = "#D968A3", `ndGBM-09` = "#D5548C", 
+                 `ndGBM-10` = "#DD5B87", `ndGBM-11-A` = "#EB6A88", `ndGBM-11-B` = "#EF7082", 
+                 `ndGBM-11-C` = "#D95A64", `ndGBM-11-D` = "#C34446", `rGBM-01-A` = "#CD464A", 
                  `rGBM-01-B` = "#E5525B", `rGBM-01-C` = "#F75F64", `rGBM-01-D` = "#ED6A43", 
                  `rGBM-02-2` = "#E37623", `rGBM-02-3` = "#E77B23", `rGBM-02-4` = "#F47B34", 
                  `rGBM-02-5` = "#FF7D3F", `rGBM-03-1` = "#FF8E25", `rGBM-03-2` = "#FF9F0A", 
@@ -172,9 +172,10 @@ for (i in 1:length(names(FragmentColors))) {
 Final[[1]]=ggplotGrob(p0)
 numofplots= length(Final)
 pdf(file =paste0(OutputDirectory,ObjName,Subset," pathway butterfly by Fragment figure 5b.pdf"), height = 15, width =35,onefile = T)
-grid.arrange(grobs=Final, widths = c(4,1,1,1,1,1,1,1,1,1),layout_matrix = rbind(c(1, 2, 3,4,5,6,7,8,9,10),c(1, 11, 12,13,14,15,16,17,18,19),
-                                                                                c(1, 20, 21,22,23,24,25,26,27,NA),c(1, 28,29, 30,31,32,33,34,35,36),
-                                                                                c(1, 37,38, 39,40,41,42,43,44,45))) 
+grid.arrange(grobs=Final, widths = c(4,1,1,1,1,1,1,1,1,1,1,1),layout_matrix = rbind(c(1, 2, 3,4,5,NA,NA,NA,NA,NA,NA,NA),c(1,6,7,8,9,10, 11, 12,13,14,15,16),
+                                                                                c(1,17,18,19, 20, 21,22,23,24,25,26,27),
+                                                                                c(1, 28,29, 30,31,32,33,34,35,36,37,38),
+                                                                                c(1, 39,40,41,42,43,44,45,NA,NA,NA,NA))) 
 dev.off()
 
 
